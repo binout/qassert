@@ -51,7 +51,17 @@ public class QAssertions {
         return  new CheckstyleAssert(files);
     }
 
-    public static PMDAssert assertPMD(File file) {
-        return  new PMDAssert(file);
+    public static PMDAssert assertPMD() throws IOException {
+        String startDir = "src/main/java";
+        List<File> files = getJavaFiles(startDir);
+        return assertPMD(files);
+    }
+
+    public static PMDAssert assertPMD(File... files) {
+        return  new PMDAssert(Arrays.asList(files));
+    }
+
+    public static PMDAssert assertPMD(List<File> files) {
+        return  new PMDAssert(files);
     }
 }

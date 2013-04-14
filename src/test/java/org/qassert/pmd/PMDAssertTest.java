@@ -13,6 +13,11 @@ import static org.qassert.QAssertions.assertPMD;
 
 public class PMDAssertTest {
 
+    @Test
+    public void assertPMD_unusedimport_should_not_fail() throws Exception {
+        assertPMD().unusedImport().hasNoErrors();
+    }
+
     @Test(expected = AssertionError.class)
     public void assertPMD_unusedimport_should_fail() throws FileNotFoundException, PMDException {
         assertPMD(new File("src/test/java/org/qassert/examples/UnusedImport.java")).unusedImport().hasNoErrors();
