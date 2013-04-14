@@ -16,12 +16,12 @@ public class CheckstyleAssertTest {
 
     @Test(expected = AssertionError.class)
     public void assertCheckstyle_unusedimport_should_fail() throws CheckstyleException {
-        assertCheckstyle(new File("test/java/org/qassert/examples/UnusedImport.java")).unusedImport().hasNoErrors();
+        assertCheckstyle(new File("src/test/java/org/qassert/examples/UnusedImport.java")).unusedImport().hasNoErrors();
     }
 
     @Test
     public void assertCheckstyle_unusedimport_should_count_errors() throws CheckstyleException {
-        int errors = assertCheckstyle(new File("test/java/org/qassert/examples/UnusedImport.java")).unusedImport().countErrors();
+        int errors = assertCheckstyle(new File("src/test/java/org/qassert/examples/UnusedImport.java")).unusedImport().countErrors();
         Assert.assertEquals(1, errors);
     }
 }

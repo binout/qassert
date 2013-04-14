@@ -1,6 +1,7 @@
 package org.qassert;
 
 import org.qassert.checkstyle.CheckstyleAssert;
+import org.qassert.pmd.PMDAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,5 +49,9 @@ public class QAssertions {
 
     public static CheckstyleAssert assertCheckstyle(List<File> files) {
         return  new CheckstyleAssert(files);
+    }
+
+    public static PMDAssert assertPMD(File file) {
+        return  new PMDAssert(file);
     }
 }
