@@ -2,46 +2,26 @@ package org.qassert.pmd;
 
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.typeresolution.rules.imports.UnusedImports;
+import org.qassert.QAssert;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class PMDAssert {
+public class PMDAssert extends QAssert {
 
-    private List<File> files;
     private RuleSet rules;
 
     public PMDAssert(List<File> files)  {
-        this.files = files;
+        super(files);
         this.rules = new RuleSet();
     }
 
-    public PMDAssert unusedImport()  {
-        UnusedImports rule = new UnusedImports();
-        rule.setMessage("UnusedImports");
-        rules.addRule(rule);
-        return this;
-    }
-
-    public void hasNoErrors() throws FileNotFoundException, PMDException {
-        int violations = countErrors();
-        if (violations > 0) {
-            throw new AssertionError("PMD detects violations");
-        }
-    }
-
-    public int countErrors() throws PMDException, FileNotFoundException {
-        int nbViolations = 0;
-        for (File file : files) {
-            nbViolations += processFile(file);
-        }
-        return nbViolations;
-    }
-
-    private int processFile(File file) throws PMDException, FileNotFoundException {
+    @Override
+    protected int processFile(File file) {
         String fullPath = Paths.get("").toAbsolutePath() + "/" + file.toString();
 
         PMD pmd = new PMD();
@@ -52,8 +32,28 @@ public class PMDAssert {
         Report report = new Report();
         ruleContext.setReport(report);
 
-        pmd.processFile(new FileReader(fullPath), new RuleSets(rules), ruleContext, SourceType.JAVA_17);
+        try {
+            pmd.processFile(new FileReader(fullPath), new RuleSets(rules), ruleContext, SourceType.JAVA_17);
+            return report.getViolationTree().size();
+        } catch (FileNotFoundException  | PMDException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        return report.getViolationTree().size();
+    @Override
+    protected PMDAssert withConfig(File file) {
+        try {
+            rules = new RuleSetFactory().createRuleSet(new FileInputStream(file));
+            return this;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public PMDAssert unusedImports()  {
+        UnusedImports rule = new UnusedImports();
+        rule.setMessage("UnusedImports");
+        rules.addRule(rule);
+        return this;
     }
 }
